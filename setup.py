@@ -28,7 +28,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='2018.3',
+    version='2018.4',
 
     description='A thread pool that auto-manages the number of worker threads and is compatible with the "futures" module ThreadPoolExecutor interface.',
     long_description=long_description,
