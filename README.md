@@ -22,9 +22,9 @@ The CollapsingThreadPoolExecutor is inspired by and compatible with the ThreadPo
     $ pip install .
     $ pip install -r requirements.txt
 
-    # mkvirtualenv -p `which python3` collapsing-thread-pool-executor-py3
+    $ mkvirtualenv -p `which python3` collapsing-thread-pool-executor-py3
     $ pip install .
-    # pip install -r requirements.txt
+    $ pip install -r requirements.txt
 
 **Watch the tests**
 
