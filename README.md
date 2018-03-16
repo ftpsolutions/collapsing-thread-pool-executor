@@ -18,11 +18,11 @@ The CollapsingThreadPoolExecutor is inspired by and compatible with the ThreadPo
 
 **Set up the environments**
 
-    $ mkvirtualenv collapsing-thread-pool-executor-py2
+    $ mkvirtualenv -p `which python2.7` collapsing-thread-pool-executor-py2
     $ pip install .
     $ pip install -r requirements.txt
 
-    # mkvirtualenv collapsing-thread-pool-executor-py3
+    # mkvirtualenv -p `which python3` collapsing-thread-pool-executor-py3
     $ pip install .
     # pip install -r requirements.txt
 
