@@ -135,7 +135,8 @@ class _Worker(threading.Thread):
 
 # based on concurrent.futures.thread.ThreadPoolexecutor
 class CollapsingThreadPoolExecutor(_base.Executor):
-    def __init__(self, max_workers=None, thread_name_prefix=None, permitted_thread_age_in_seconds=30):
+    def __init__(self, max_workers=None, thread_name_prefix=None,
+                 permitted_thread_age_in_seconds=30, logger=None):
         if max_workers is None:
             # Use this number because ThreadPoolExecutor is often
             # used to overlap I/O instead of CPU work.
@@ -147,7 +148,7 @@ class CollapsingThreadPoolExecutor(_base.Executor):
         self._thread_name_prefix = thread_name_prefix or '{0}'.format(hex(id(self))[2:])
         self._permitted_thread_age_in_seconds = permitted_thread_age_in_seconds
 
-        self._logger = getLogger(self.__class__.__name__)
+        self._logger = logger if logger is not None else getLogger(self.__class__.__name__)
 
         self._work_queue = queue.Queue()
         self._workers = set()
