@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 install_requires = [
-    'futures==3.2.0',
+    'futures>=3.2.0,<4.0.0',
 ] if sys.version_info <= (3, 2) else []
 
 setup(
