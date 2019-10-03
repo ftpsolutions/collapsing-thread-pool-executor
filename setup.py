@@ -32,6 +32,7 @@ setup(
 
     description='A thread pool that auto-manages the number of worker threads and is compatible with the "futures" module ThreadPoolExecutor interface.',
     long_description=long_description,
+    long_description_content_type="text/markdown",
 
     # The project's main homepage.
     url='https://github.com/initialed85/collapsing-thread-pool-executor',
