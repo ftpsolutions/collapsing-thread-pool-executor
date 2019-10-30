@@ -125,7 +125,7 @@ class _Worker(threading.Thread):
                 #   - The interpreter is shutting down OR
                 #   - The executor that owns the worker has been collected OR
                 #   - The executor that owns the worker has been shutdown.
-                if _shutdown or executor is None:
+                if _shutdown or executor is None or executor._shutdown:
                     return
 
                 del executor
@@ -171,11 +171,16 @@ class CollapsingThreadPoolExecutor(_base.Executor):
         )
         self._work_queue_thread.daemon = True
         self._work_queue_thread.start()
+        self._work_queue_finished = False
 
         _thread_pools.add(self)
 
     def _worker_available(self, worker):
-        self._available_workers_queue.put(worker)
+        if self._work_queue_finished:
+            # wake the worker to exit right away
+            worker.work_item_available_event.set()
+        else:
+            self._available_workers_queue.put(worker)
 
     def _cleanup_threads(self):
         last_num_workers = -1
@@ -225,6 +230,15 @@ class CollapsingThreadPoolExecutor(_base.Executor):
             try:
                 work_item = self._work_queue.get(timeout=5)
                 if work_item is None:  # shutdown commanded
+                    # wake all the workers so they exit quickly
+                    self._work_queue_finished = True
+                    try:
+                        while True:
+                            w = self._available_workers_queue.get_nowait()
+                            if w:
+                                w.work_item_available_event.set()
+                    except queue.Empty:
+                        pass
                     return
             except queue.Empty:
                 continue
