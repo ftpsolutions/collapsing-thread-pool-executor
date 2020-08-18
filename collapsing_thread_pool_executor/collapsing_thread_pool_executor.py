@@ -1,18 +1,17 @@
 import atexit
-import sys
 import threading
 import weakref
-from concurrent.futures import _base
+from concurrent.futures import _base  # noqa
 from logging import getLogger
 from uuid import uuid4
 
 try:  # Python3
     import queue
 except Exception:  # Python2
-    import Queue as queue
+    import Queue as queue  # noqa
 
 try:  # Python2
-    from concurrent.futures.thread import cpu_count
+    from concurrent.futures.thread import cpu_count  # noqa
 except BaseException:  # Python3
     from multiprocessing import cpu_count
 
@@ -114,7 +113,7 @@ class _Worker(threading.Thread):
                     return
 
                 if work_item is not None:  # do the work
-                    work_item.run()
+                    work_item.run()  # noqa
                     del work_item  # Delete references to object. See issue16284
                     continue
 
@@ -132,7 +131,7 @@ class _Worker(threading.Thread):
             _base.LOGGER.critical('Exception in worker', exc_info=True)
 
 
-# based on concurrent.futures.thread.ThreadPoolexecutor
+# based on concurrent.futures.thread.ThreadPoolExecutor
 class CollapsingThreadPoolExecutor(_base.Executor):
     def __init__(self, max_workers=None, thread_name_prefix=None,
                  permitted_thread_age_in_seconds=30, logger=None):
