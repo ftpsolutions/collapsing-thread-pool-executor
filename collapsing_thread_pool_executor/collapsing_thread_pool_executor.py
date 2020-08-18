@@ -52,9 +52,8 @@ class _WorkItem(object):
 
         try:
             result = self.fn(*self.args, **self.kwargs)
-        except BaseException:
-            e, tb = sys.exc_info()[1:]
-            self.future.set_exception_info(e, tb)
+        except BaseException as exc:
+            self.future.set_exception(exc)
         else:
             self.future.set_result(result)
 
@@ -192,7 +191,7 @@ class CollapsingThreadPoolExecutor(_base.Executor):
             dead_workers = []
             with self._workers_lock:
                 for w in self._workers:
-                    if w.ident and not w.isAlive():
+                    if w.ident and not w.is_alive():
                         dead_workers += [w]
 
                 for w in dead_workers:
@@ -257,7 +256,7 @@ class CollapsingThreadPoolExecutor(_base.Executor):
 
                 if w is None:  # shutdown commanded
                     return
-                elif w.ident and not w.isAlive():  # dead worker
+                elif w.ident and not w.is_alive():  # dead worker
                     continue
 
                 worker = w

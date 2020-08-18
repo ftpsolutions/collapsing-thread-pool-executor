@@ -1,11 +1,9 @@
 import datetime
-import logging
-import sys
 import time
 import unittest
+from concurrent.futures import as_completed
 
-from hamcrest import assert_that, equal_to, less_than_or_equal_to
-from mock import MagicMock, call
+from hamcrest import assert_that, less_than_or_equal_to, greater_than_or_equal_to
 
 from collapsing_thread_pool_executor import CollapsingThreadPoolExecutor
 
@@ -27,50 +25,35 @@ class CollapsingThreadPoolExecutorTest(unittest.TestCase):
         )
 
     def test_some_fast_work(self):
-        work = MagicMock()
-        work.side_effect = short_sleep()
-
         before = datetime.datetime.now()
 
+        futures = []
         for i in range(0, 20):
-            self._subject.submit(work)
+            futures += [self._subject.submit(short_sleep)]
 
-        while len(work.mock_calls) < 20:
-            time.sleep(0.01)
+        for future in as_completed(futures):
+            _ = future.result()
 
         after = datetime.datetime.now()
 
         assert_that(
-            work.mock_calls,
-            equal_to([call()] * 20)
-        )
-
-        assert_that(
             (after - before).total_seconds(),
-            less_than_or_equal_to(0.2)
+            less_than_or_equal_to(0.3)
         )
 
     def test_some_slow_work(self):
-        for i in range(0, 5):
-            work = MagicMock()
-            work.side_effect = long_sleep()
+        before = datetime.datetime.now()
 
-            before = datetime.datetime.now()
+        futures = []
+        for i in range(0, 20):
+            futures += [self._subject.submit(long_sleep)]
 
-            for i in range(0, 20):
-                self._subject.submit(work)
+        for future in as_completed(futures):
+            _ = future.result()
 
-            while len(work.mock_calls) < 20:
-                time.sleep(0.01)
+        after = datetime.datetime.now()
 
-            after = datetime.datetime.now()
-
-            assert_that(
-                work.mock_calls,
-                equal_to([call()] * 20)
-            )
-
-            assert_that(
-                (after - before).total_seconds(),
-                less_than_or_equal_to(0.2)
-            )
+        assert_that(
+            (after - before).total_seconds(),
+            greater_than_or_equal_to(1.9)
+        )
