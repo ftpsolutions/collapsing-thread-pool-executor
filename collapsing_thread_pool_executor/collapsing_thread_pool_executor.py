@@ -52,9 +52,8 @@ class _WorkItem(object):
 
         try:
             result = self.fn(*self.args, **self.kwargs)
-        except BaseException:
-            e, tb = sys.exc_info()[1:]
-            self.future.set_exception_info(e, tb)
+        except BaseException as exc:
+            self.future.set_exception(exc)
         else:
             self.future.set_result(result)
 
