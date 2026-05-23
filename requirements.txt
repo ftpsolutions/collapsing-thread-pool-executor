@@ -4,4 +4,4 @@ PyHamcrest==2.0.2; python_version > '2.7'
 mock==3.0.5; python_version <= '2.7'
 PyHamcrest==1.10.1; python_version <= '2.7'
 
-pytest==4.6.11
+pytest==9.0.3
